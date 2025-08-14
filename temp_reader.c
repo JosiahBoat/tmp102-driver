@@ -12,13 +12,13 @@
 #include <sys/stat.h>
 
 #ifndef I2C_BUS
-#define I2C_BUS "/dev/i2c-5"           // Verify with: i2cdetect -y 5 (or 3)
+#define I2C_BUS "/dev/i2c-5"           // Verify with: i2cdetect -y 5 
 #endif
 #define TMP102_ADDR 0x48
 #define TEMP_REG    0x00
 
 #ifndef FIFO_PATH
-#define FIFO_PATH   "/tmp/temp_pipe"   // You can also use "/run/temp_pipe"
+#define FIFO_PATH   "/tmp/temp_pipe"   
 #endif
 #ifndef LOG_FILE
 #define LOG_FILE    "/var/log/temp_log.txt"
@@ -29,8 +29,8 @@ static void on_sigint(int s){ (void)s; keep_running = 0; }
 
 static float tmp102_to_celsius(unsigned raw12) {
     // 12-bit two's complement
-    if (raw12 & 0x800) {               // negative
-        raw12 |= 0xF000;               // sign extend to 16 bits
+    if (raw12 & 0x800) {               
+        raw12 |= 0xF000;               
         int16_t s = (int16_t)raw12;
         return s * 0.0625f;
     }
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
     if (i2c_fd < 0) { perror("open I2C"); return 1; }
     if (ioctl(i2c_fd, I2C_SLAVE, TMP102_ADDR) < 0) { perror("I2C_SLAVE"); close(i2c_fd); return 1; }
 
-    // Open FIFO non-blocking so we don't stall if the GUI isn't running yet
+    // Open FIFO 
     fifo_fd = open(FIFO_PATH, O_WRONLY | O_NONBLOCK | O_CLOEXEC);
     if (fifo_fd < 0 && errno != ENXIO) { perror("open FIFO"); close(i2c_fd); return 1; }
 
